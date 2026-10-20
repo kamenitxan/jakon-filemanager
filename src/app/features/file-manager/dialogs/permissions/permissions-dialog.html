@@ -1,0 +1,36 @@
+<h2 mat-dialog-title>{{ i18n.translate('dialog.permissions.title') }}</h2>
+<div mat-dialog-content>
+  <p class="fm-dialog-hint">{{ i18n.translate('dialog.permissions.hint', { count: data.names.length }) }}</p>
+  <table class="fm-perms-table">
+    <thead>
+      <tr>
+        <th></th>
+        @for (flag of flags; track flag) {
+          <th>{{ i18n.translate('dialog.permissions.flag.' + flag) }}</th>
+        }
+      </tr>
+    </thead>
+    <tbody>
+      @for (group of groups; track group) {
+        <tr>
+          <td>{{ i18n.translate('dialog.permissions.group.' + group) }}</td>
+          @for (flag of flags; track flag) {
+            <td>
+              <mat-checkbox [checked]="isChecked(group, flag)" (change)="toggle(group, flag)" />
+            </td>
+          }
+        </tr>
+      }
+    </tbody>
+  </table>
+  <p class="fm-dialog-hint">{{ i18n.translate('dialog.permissions.preview', { perms: permsString(), code: permsCode() }) }}</p>
+  @if (data.hasFolders) {
+    <mat-checkbox [checked]="recursive()" (change)="recursive.set(!recursive())">
+      {{ i18n.translate('dialog.permissions.recursive') }}
+    </mat-checkbox>
+  }
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-button (click)="cancel()">{{ i18n.translate('common.cancel') }}</button>
+  <button mat-flat-button color="primary" (click)="confirm()">{{ i18n.translate('common.apply') }}</button>
+</div>

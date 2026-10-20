@@ -1,0 +1,51 @@
+<h2 mat-dialog-title>{{ i18n.translate('dialog.upload.title') }}</h2>
+<div mat-dialog-content>
+  <div
+    class="fm-dropzone"
+    [class.fm-dropzone--active]="isDragOver()"
+    (dragover)="onDragOver($event)"
+    (dragleave)="onDragLeave()"
+    (drop)="onDrop($event)"
+  >
+    <mat-icon class="fm-dropzone__icon">cloud_upload</mat-icon>
+    <p>{{ i18n.translate('dialog.upload.dropHint') }}</p>
+    <input #fileInput type="file" multiple hidden (change)="onFilesPicked($event)" />
+    <button mat-stroked-button type="button" (click)="fileInput.click()">
+      {{ i18n.translate('dialog.upload.browse') }}
+    </button>
+  </div>
+
+  @if (files().length > 0) {
+    <ul class="fm-upload-list">
+      @for (file of files(); track file.name; let i = $index) {
+        <li>
+          <mat-icon>description</mat-icon>
+          <span class="fm-upload-list__name">{{ file.name }}</span>
+          @if (!uploading()) {
+            <button mat-icon-button type="button" (click)="removeFile(i)">
+              <mat-icon>close</mat-icon>
+            </button>
+          }
+        </li>
+      }
+    </ul>
+  }
+
+  @if (uploading()) {
+    <mat-progress-bar mode="determinate" [value]="progress()" />
+  }
+  @if (error()) {
+    <p class="fm-dialog-error">{{ error() }}</p>
+  }
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-button (click)="cancel()" [disabled]="uploading()">{{ i18n.translate('common.cancel') }}</button>
+  <button
+    mat-flat-button
+    color="primary"
+    (click)="startUpload()"
+    [disabled]="uploading() || files().length === 0"
+  >
+    {{ i18n.translate('dialog.upload.start') }}
+  </button>
+</div>

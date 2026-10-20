@@ -1,0 +1,23 @@
+.fm-table {
+  width: 100%;
+}
+
+.fm-table__icon {
+  vertical-align: middle;
+  margin-right: 8px;
+  color: var(--mat-sys-primary);
+}
+
+tr[mat-row] {
+  cursor: pointer;
+}
+
+.fm-table__row--selected {
+  background: var(--mat-sys-secondary-container);
+}
+
+.fm-empty-state {
+  text-align: center;
+  padding: 48px 0;
+  opacity: 0.6;
+}

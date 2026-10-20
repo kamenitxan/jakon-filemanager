@@ -1,0 +1,159 @@
+// Include theming for Angular Material with `mat.theme()`.
+// This Sass mixin will define CSS variables that are used for styling Angular Material
+// components according to the Material 3 design spec.
+// Learn more about theming and how to use it for your application's
+// custom components at https://material.angular.dev/guide/theming
+@use '@angular/material' as mat;
+
+html {
+  height: 100%;
+  @include mat.theme(
+    (
+      color: (
+        primary: mat.$azure-palette,
+        tertiary: mat.$blue-palette,
+      ),
+      typography: Roboto,
+      density: 0,
+    )
+  );
+}
+
+body {
+  // Default the application to a light color theme. This can be changed to
+  // `dark` to enable the dark color theme, or to `light dark` to defer to the
+  // user's system settings.
+  color-scheme: light;
+
+  // Set a default background, font and text colors for the application using
+  // Angular Material's system-level CSS variables. Learn more about these
+  // variables at https://material.angular.dev/guide/system-variables
+  background-color: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+  font: var(--mat-sys-body-medium);
+
+  // Reset the user agent margin.
+  margin: 0;
+  height: 100%;
+}
+/* You can add global styles to this file, and also import other style files */
+
+.fm-full-width {
+  width: 100%;
+}
+
+.fm-dialog-hint {
+  opacity: 0.7;
+  font-size: 0.85rem;
+}
+
+.fm-dialog-error {
+  color: var(--mat-sys-error);
+}
+
+.fm-dialog-list {
+  max-height: 160px;
+  overflow-y: auto;
+  margin: 0;
+  padding-left: 20px;
+}
+
+.fm-perms-table {
+  border-collapse: collapse;
+  margin: 8px 0;
+
+  th,
+  td {
+    padding: 4px 12px;
+    text-align: center;
+  }
+}
+
+.fm-dropzone {
+  border: 2px dashed var(--mat-sys-outline);
+  border-radius: 8px;
+  padding: 24px;
+  text-align: center;
+  transition: background-color 0.15s ease;
+}
+
+.fm-dropzone--active {
+  background: var(--mat-sys-surface-variant);
+}
+
+.fm-dropzone__icon {
+  font-size: 40px;
+  height: 40px;
+  width: 40px;
+  opacity: 0.6;
+}
+
+.fm-upload-list {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  max-height: 200px;
+  overflow-y: auto;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0;
+  }
+}
+
+.fm-upload-list__name {
+  flex: 1 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fm-preview-content {
+  min-width: 480px;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fm-preview-image {
+  max-width: 100%;
+  max-height: 60vh;
+  align-self: center;
+}
+
+.fm-preview-editor {
+  width: 100%;
+  min-height: 400px;
+  font-family: 'Roboto Mono', monospace;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+.fm-folder-tree {
+  max-height: 320px;
+  overflow-y: auto;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 4px;
+  padding: 8px 0;
+}
+
+.fm-folder-row {
+  display: flex;
+  align-items: center;
+}
+
+.fm-folder-spacer {
+  width: 40px;
+  display: inline-block;
+}
+
+.fm-folder-icon {
+  vertical-align: middle;
+  margin-right: 4px;
+  font-size: 18px;
+  height: 18px;
+  width: 18px;
+}

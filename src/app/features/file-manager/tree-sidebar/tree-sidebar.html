@@ -1,0 +1,28 @@
+<nav class="fm-tree">
+  <ng-container *ngTemplateOutlet="nodeTpl; context: { $implicit: root() }"></ng-container>
+</nav>
+
+<ng-template #nodeTpl let-node>
+  <div
+    class="fm-tree__row"
+    [class.fm-tree__row--active]="store.currentPath() === node.path"
+    [style.paddingLeft.px]="node.depth * 14"
+  >
+    @if (node.children.length > 0 || !node.loaded) {
+      <button mat-icon-button type="button" (click)="toggle(node)">
+        <mat-icon>{{ node.expanded ? 'expand_more' : 'chevron_right' }}</mat-icon>
+      </button>
+    } @else {
+      <span class="fm-tree__spacer"></span>
+    }
+    <button type="button" class="fm-tree__label" (click)="select(node)">
+      <mat-icon>folder</mat-icon>
+      <span>{{ node.name }}</span>
+    </button>
+  </div>
+  @if (node.expanded) {
+    @for (child of node.children; track child.path) {
+      <ng-container *ngTemplateOutlet="nodeTpl; context: { $implicit: child }"></ng-container>
+    }
+  }
+</ng-template>

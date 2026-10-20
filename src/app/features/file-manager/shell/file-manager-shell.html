@@ -1,0 +1,29 @@
+<mat-sidenav-container class="fm-shell">
+  <mat-sidenav
+    #sidenav
+    class="fm-shell__sidenav"
+    [mode]="isHandset() ? 'over' : 'side'"
+    [opened]="!isHandset()"
+  >
+    <fm-tree-sidebar />
+  </mat-sidenav>
+
+  <mat-sidenav-content class="fm-shell__content">
+    @if (isHandset()) {
+      <button mat-icon-button class="fm-shell__menu-toggle" (click)="sidenav.toggle()">
+        <mat-icon>menu</mat-icon>
+      </button>
+    }
+    <fm-toolbar />
+    @if (store.loading()) {
+      <mat-progress-bar mode="indeterminate" />
+    }
+    <div class="fm-shell__view">
+      @if (store.viewMode() === 'list') {
+        <fm-file-list />
+      } @else {
+        <fm-file-grid />
+      }
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

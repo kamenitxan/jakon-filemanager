@@ -1,0 +1,41 @@
+.fm-tree {
+  overflow-y: auto;
+  height: 100%;
+  padding: 8px 0;
+}
+
+.fm-tree__row {
+  display: flex;
+  align-items: center;
+}
+
+.fm-tree__row--active {
+  background: var(--mat-sys-secondary-container);
+  border-radius: 20px;
+}
+
+.fm-tree__spacer {
+  width: 40px;
+  display: inline-block;
+}
+
+.fm-tree__label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 12px 4px 4px;
+  border-radius: 20px;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fm-tree__label:hover {
+  background: var(--mat-sys-surface-variant);
+}

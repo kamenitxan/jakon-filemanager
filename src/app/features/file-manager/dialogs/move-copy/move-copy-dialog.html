@@ -1,0 +1,41 @@
+<h2 mat-dialog-title>
+  {{ data.mode === 'move' ? i18n.translate('dialog.moveCopy.titleMove') : i18n.translate('dialog.moveCopy.titleCopy') }}
+</h2>
+<div mat-dialog-content>
+  <p class="fm-dialog-hint">{{ i18n.translate('dialog.moveCopy.hint', { count: data.items.length }) }}</p>
+
+  <div class="fm-folder-tree">
+    <ng-container *ngTemplateOutlet="nodeTpl; context: { $implicit: root() }"></ng-container>
+  </div>
+
+  <ng-template #nodeTpl let-node>
+    <div class="fm-folder-row" [style.paddingLeft.px]="node.depth * 16">
+      @if (node.children.length > 0 || !node.loaded) {
+        <button mat-icon-button type="button" (click)="toggle(node)">
+          <mat-icon>{{ node.expanded ? 'expand_more' : 'chevron_right' }}</mat-icon>
+        </button>
+      } @else {
+        <span class="fm-folder-spacer"></span>
+      }
+      <mat-radio-button
+        [value]="node.path"
+        [checked]="selectedPath() === node.path"
+        (change)="select(node)"
+      >
+        <mat-icon class="fm-folder-icon">folder</mat-icon>
+        {{ node.name }}
+      </mat-radio-button>
+    </div>
+    @if (node.expanded) {
+      @for (child of node.children; track child.path) {
+        <ng-container *ngTemplateOutlet="nodeTpl; context: { $implicit: child }"></ng-container>
+      }
+    }
+  </ng-template>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-button (click)="cancel()">{{ i18n.translate('common.cancel') }}</button>
+  <button mat-flat-button color="primary" (click)="confirm()">
+    {{ data.mode === 'move' ? i18n.translate('common.move') : i18n.translate('common.copy') }}
+  </button>
+</div>

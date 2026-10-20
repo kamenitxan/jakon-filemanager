@@ -1,0 +1,22 @@
+.fm-shell {
+  height: 100vh;
+}
+
+.fm-shell__sidenav {
+  width: 260px;
+}
+
+.fm-shell__content {
+  display: flex;
+  flex-direction: column;
+}
+
+.fm-shell__view {
+  flex: 1 1 auto;
+  overflow: auto;
+}
+
+.fm-shell__menu-toggle {
+  align-self: flex-start;
+  margin: 4px;
+}

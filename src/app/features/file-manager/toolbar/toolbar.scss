@@ -1,0 +1,43 @@
+.fm-toolbar {
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  padding: 8px 12px;
+  gap: 4px;
+}
+
+.fm-toolbar__row {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-wrap: wrap;
+}
+
+.fm-toolbar__spacer {
+  flex: 1 1 auto;
+}
+
+.fm-toolbar__search {
+  width: 220px;
+  margin-right: 8px;
+}
+
+.fm-toolbar__breadcrumbs {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  font-size: 0.9rem;
+}
+
+.fm-toolbar__breadcrumb-sep {
+  font-size: 18px;
+  height: 18px;
+  width: 18px;
+  opacity: 0.6;
+}
+
+@media (max-width: 768px) {
+  .fm-toolbar__search {
+    width: 140px;
+  }
+}

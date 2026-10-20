@@ -1,0 +1,33 @@
+<h2 mat-dialog-title>{{ data.entry.name }}</h2>
+<div mat-dialog-content class="fm-preview-content">
+  @switch (kind) {
+    @case ('image') {
+      <img class="fm-preview-image" [src]="downloadUrl" [alt]="data.entry.name" />
+    }
+    @case ('text') {
+      @if (loading()) {
+        <mat-spinner diameter="32" />
+      } @else {
+        <textarea class="fm-preview-editor" [(ngModel)]="content" spellcheck="false"></textarea>
+      }
+    }
+    @case ('unsupported') {
+      <p>{{ i18n.translate('dialog.preview.unsupported') }}</p>
+      <a mat-stroked-button [href]="downloadUrl" target="_blank">
+        <mat-icon>download</mat-icon>
+        {{ i18n.translate('common.download') }}
+      </a>
+    }
+  }
+  @if (error()) {
+    <p class="fm-dialog-error">{{ error() }}</p>
+  }
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-button (click)="close()">{{ i18n.translate('common.close') }}</button>
+  @if (kind === 'text') {
+    <button mat-flat-button color="primary" (click)="save()" [disabled]="loading() || saving()">
+      {{ i18n.translate('common.save') }}
+    </button>
+  }
+</div>

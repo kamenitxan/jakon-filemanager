@@ -1,0 +1,51 @@
+<div class="fm-grid">
+  @for (entry of store.filteredEntries(); track entry.path) {
+    <div
+      class="fm-grid__tile"
+      [class.fm-grid__tile--selected]="isSelected(entry)"
+      (click)="selectTile(entry); open(entry)"
+    >
+      <mat-checkbox
+        class="fm-grid__checkbox"
+        [checked]="isSelected(entry)"
+        (click)="$event.stopPropagation()"
+        (change)="toggle(entry)"
+      />
+      <button
+        mat-icon-button
+        class="fm-grid__menu-trigger"
+        [matMenuTriggerFor]="tileMenu"
+        (click)="$event.stopPropagation(); selectTile(entry)"
+      >
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #tileMenu="matMenu">
+        <button mat-menu-item (click)="actions.rename(entry)">
+          <mat-icon>drive_file_rename_outline</mat-icon>{{ i18n.translate('toolbar.rename') }}
+        </button>
+        <button mat-menu-item (click)="actions.moveOrCopy([entry], 'move')">
+          <mat-icon>drive_file_move</mat-icon>{{ i18n.translate('toolbar.move') }}
+        </button>
+        <button mat-menu-item (click)="actions.moveOrCopy([entry], 'copy')">
+          <mat-icon>content_copy</mat-icon>{{ i18n.translate('toolbar.copy') }}
+        </button>
+        <button mat-menu-item (click)="actions.download([entry])">
+          <mat-icon>download</mat-icon>{{ i18n.translate('toolbar.download') }}
+        </button>
+        <button mat-menu-item (click)="actions.compress([entry])">
+          <mat-icon>folder_zip</mat-icon>{{ i18n.translate('toolbar.compress') }}
+        </button>
+        <button mat-menu-item (click)="actions.deleteEntries([entry])">
+          <mat-icon>delete</mat-icon>{{ i18n.translate('toolbar.delete') }}
+        </button>
+      </mat-menu>
+
+      <mat-icon class="fm-grid__icon">{{ entry.type === 'dir' ? 'folder' : 'description' }}</mat-icon>
+      <span class="fm-grid__name">{{ entry.name }}</span>
+    </div>
+  }
+</div>
+
+@if (store.filteredEntries().length === 0 && !store.loading()) {
+  <p class="fm-empty-state">{{ i18n.translate('fileList.empty') }}</p>
+}

@@ -1,0 +1,12 @@
+<h2 mat-dialog-title>{{ i18n.translate('dialog.compress.title') }}</h2>
+<div mat-dialog-content>
+  <p class="fm-dialog-hint">{{ i18n.translate('dialog.compress.hint', { path: data.currentPath }) }}</p>
+  <mat-form-field appearance="outline" class="fm-full-width">
+    <mat-label>{{ i18n.translate('dialog.compress.label') }}</mat-label>
+    <input matInput [formControl]="filenameControl" (keyup.enter)="confirm()" cdkFocusInitial />
+  </mat-form-field>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-button (click)="cancel()">{{ i18n.translate('common.cancel') }}</button>
+  <button mat-flat-button color="primary" (click)="confirm()">{{ i18n.translate('common.compress') }}</button>
+</div>

@@ -1,0 +1,125 @@
+<mat-toolbar class="fm-toolbar">
+  <div class="fm-toolbar__row">
+    <button mat-icon-button [matTooltip]="i18n.translate('toolbar.up')" (click)="store.navigateUp()">
+      <mat-icon>arrow_upward</mat-icon>
+    </button>
+    <button mat-icon-button [matTooltip]="i18n.translate('toolbar.refresh')" (click)="refresh()">
+      <mat-icon>refresh</mat-icon>
+    </button>
+
+    <button mat-icon-button [matTooltip]="i18n.translate('toolbar.newFolder')" (click)="createFolder()">
+      <mat-icon>create_new_folder</mat-icon>
+    </button>
+    <button mat-icon-button [matTooltip]="i18n.translate('toolbar.upload')" (click)="upload()">
+      <mat-icon>upload</mat-icon>
+    </button>
+
+    <button
+      mat-icon-button
+      [matTooltip]="i18n.translate('toolbar.rename')"
+      [disabled]="store.selectedPaths().size !== 1"
+      (click)="rename()"
+    >
+      <mat-icon>drive_file_rename_outline</mat-icon>
+    </button>
+    <button
+      mat-icon-button
+      [matTooltip]="i18n.translate('toolbar.move')"
+      [disabled]="!store.hasSelection()"
+      (click)="move()"
+    >
+      <mat-icon>drive_file_move</mat-icon>
+    </button>
+    <button
+      mat-icon-button
+      [matTooltip]="i18n.translate('toolbar.copy')"
+      [disabled]="!store.hasSelection()"
+      (click)="copy()"
+    >
+      <mat-icon>content_copy</mat-icon>
+    </button>
+    <button
+      mat-icon-button
+      [matTooltip]="i18n.translate('toolbar.download')"
+      [disabled]="!store.hasSelection()"
+      (click)="download()"
+    >
+      <mat-icon>download</mat-icon>
+    </button>
+    <button
+      mat-icon-button
+      [matTooltip]="i18n.translate('toolbar.compress')"
+      [disabled]="!store.hasSelection()"
+      (click)="compress()"
+    >
+      <mat-icon>folder_zip</mat-icon>
+    </button>
+    <button
+      mat-icon-button
+      [matTooltip]="i18n.translate('toolbar.extract')"
+      [disabled]="store.selectedPaths().size !== 1"
+      (click)="extract()"
+    >
+      <mat-icon>unarchive</mat-icon>
+    </button>
+    <button
+      mat-icon-button
+      [matTooltip]="i18n.translate('toolbar.permissions')"
+      [disabled]="!store.hasSelection()"
+      (click)="permissions()"
+    >
+      <mat-icon>lock</mat-icon>
+    </button>
+    <button
+      mat-icon-button
+      color="warn"
+      [matTooltip]="i18n.translate('toolbar.delete')"
+      [disabled]="!store.hasSelection()"
+      (click)="delete()"
+    >
+      <mat-icon>delete</mat-icon>
+    </button>
+
+    <span class="fm-toolbar__spacer"></span>
+
+    <mat-form-field appearance="outline" class="fm-toolbar__search" subscriptSizing="dynamic">
+      <mat-icon matPrefix>search</mat-icon>
+      <input
+        matInput
+        [(ngModel)]="searchTerm"
+        [placeholder]="i18n.translate('toolbar.search')"
+      />
+    </mat-form-field>
+
+    <mat-button-toggle-group
+      [value]="store.viewMode()"
+      (change)="store.setViewMode($event.value)"
+      aria-label="view mode"
+    >
+      <mat-button-toggle value="list" [matTooltip]="i18n.translate('toolbar.listView')">
+        <mat-icon>view_list</mat-icon>
+      </mat-button-toggle>
+      <mat-button-toggle value="icon" [matTooltip]="i18n.translate('toolbar.iconView')">
+        <mat-icon>grid_view</mat-icon>
+      </mat-button-toggle>
+    </mat-button-toggle-group>
+
+    <button mat-icon-button [matMenuTriggerFor]="langMenu" [matTooltip]="i18n.translate('toolbar.language')">
+      <mat-icon>translate</mat-icon>
+    </button>
+    <mat-menu #langMenu="matMenu">
+      @for (lang of i18n.languages; track lang) {
+        <button mat-menu-item (click)="setLanguage(lang)">{{ lang.toUpperCase() }}</button>
+      }
+    </mat-menu>
+  </div>
+
+  <div class="fm-toolbar__breadcrumbs">
+    @for (crumb of store.breadcrumbs(); track crumb.path; let last = $last) {
+      <button mat-button (click)="store.navigateTo(crumb.path)">{{ crumb.name }}</button>
+      @if (!last) {
+        <mat-icon class="fm-toolbar__breadcrumb-sep">chevron_right</mat-icon>
+      }
+    }
+  </div>
+</mat-toolbar>

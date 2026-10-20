@@ -1,0 +1,87 @@
+<table mat-table [dataSource]="store.filteredEntries()" class="fm-table">
+  <ng-container matColumnDef="select">
+    <th mat-header-cell *matHeaderCellDef></th>
+    <td mat-cell *matCellDef="let entry">
+      <mat-checkbox
+        [checked]="isSelected(entry)"
+        (click)="$event.stopPropagation()"
+        (change)="toggle(entry)"
+      />
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="name">
+    <th mat-header-cell *matHeaderCellDef>{{ i18n.translate('fileList.name') }}</th>
+    <td mat-cell *matCellDef="let entry">
+      <mat-icon class="fm-table__icon">{{ entry.type === 'dir' ? 'folder' : 'description' }}</mat-icon>
+      {{ entry.name }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="size">
+    <th mat-header-cell *matHeaderCellDef>{{ i18n.translate('fileList.size') }}</th>
+    <td mat-cell *matCellDef="let entry">{{ entry.type === 'dir' ? '—' : formatSize(entry.sizeBytes) }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="date">
+    <th mat-header-cell *matHeaderCellDef>{{ i18n.translate('fileList.modified') }}</th>
+    <td mat-cell *matCellDef="let entry">{{ entry.date }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="rights">
+    <th mat-header-cell *matHeaderCellDef>{{ i18n.translate('fileList.rights') }}</th>
+    <td mat-cell *matCellDef="let entry"><code>{{ entry.rights }}</code></td>
+  </ng-container>
+
+  <ng-container matColumnDef="menu">
+    <th mat-header-cell *matHeaderCellDef></th>
+    <td mat-cell *matCellDef="let entry">
+      <button mat-icon-button [matMenuTriggerFor]="rowMenu" (click)="$event.stopPropagation(); selectRow(entry)">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #rowMenu="matMenu">
+        <button mat-menu-item (click)="actions.rename(entry)">
+          <mat-icon>drive_file_rename_outline</mat-icon>{{ i18n.translate('toolbar.rename') }}
+        </button>
+        <button mat-menu-item (click)="actions.moveOrCopy([entry], 'move')">
+          <mat-icon>drive_file_move</mat-icon>{{ i18n.translate('toolbar.move') }}
+        </button>
+        <button mat-menu-item (click)="actions.moveOrCopy([entry], 'copy')">
+          <mat-icon>content_copy</mat-icon>{{ i18n.translate('toolbar.copy') }}
+        </button>
+        <button mat-menu-item (click)="actions.download([entry])">
+          <mat-icon>download</mat-icon>{{ i18n.translate('toolbar.download') }}
+        </button>
+        <button mat-menu-item (click)="actions.compress([entry])">
+          <mat-icon>folder_zip</mat-icon>{{ i18n.translate('toolbar.compress') }}
+        </button>
+        @if (entry.type === 'file') {
+          <button mat-menu-item (click)="actions.extract(entry)">
+            <mat-icon>unarchive</mat-icon>{{ i18n.translate('toolbar.extract') }}
+          </button>
+          <button mat-menu-item (click)="actions.openEditOrPreview(entry)">
+            <mat-icon>visibility</mat-icon>{{ i18n.translate('toolbar.preview') }}
+          </button>
+        }
+        <button mat-menu-item (click)="actions.changePermissions([entry])">
+          <mat-icon>lock</mat-icon>{{ i18n.translate('toolbar.permissions') }}
+        </button>
+        <button mat-menu-item (click)="actions.deleteEntries([entry])">
+          <mat-icon>delete</mat-icon>{{ i18n.translate('toolbar.delete') }}
+        </button>
+      </mat-menu>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr
+    mat-row
+    *matRowDef="let entry; columns: displayedColumns"
+    [class.fm-table__row--selected]="isSelected(entry)"
+    (click)="open(entry)"
+  ></tr>
+</table>
+
+@if (store.filteredEntries().length === 0 && !store.loading()) {
+  <p class="fm-empty-state">{{ i18n.translate('fileList.empty') }}</p>
+}
