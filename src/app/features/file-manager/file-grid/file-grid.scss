@@ -45,6 +45,14 @@
   margin-top: 8px;
 }
 
+.fm-grid__thumbnail {
+  width: 64px;
+  height: 64px;
+  margin-top: 8px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
 .fm-grid__name {
   margin-top: 8px;
   font-size: 0.85rem;

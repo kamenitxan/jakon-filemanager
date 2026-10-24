@@ -40,7 +40,17 @@
         </button>
       </mat-menu>
 
-      <mat-icon class="fm-grid__icon">{{ entry.type === 'dir' ? 'folder' : 'description' }}</mat-icon>
+      @if (showThumbnail(entry)) {
+        <img
+          class="fm-grid__thumbnail"
+          [src]="thumbnailUrl(entry)"
+          [alt]="entry.name"
+          loading="lazy"
+          (error)="onThumbnailError(entry)"
+        />
+      } @else {
+        <mat-icon class="fm-grid__icon">{{ entry.type === 'dir' ? 'folder' : 'description' }}</mat-icon>
+      }
       <span class="fm-grid__name">{{ entry.name }}</span>
     </div>
   }

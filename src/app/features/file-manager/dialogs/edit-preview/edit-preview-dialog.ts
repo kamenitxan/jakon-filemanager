@@ -7,12 +7,12 @@ import { FormsModule } from '@angular/forms';
 import { FileManagerApiService } from '../../../../core/services/file-manager-api.service';
 import { I18nService } from '../../../../core/services/i18n.service';
 import { FileManagerEntry } from '../../../../core/models/file-manager.model';
+import { isImageFile } from '../../../../core/utils/file-type.util';
 
 export interface EditPreviewDialogData {
   entry: FileManagerEntry;
 }
 
-const IMAGE_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif', 'svg', 'webp', 'bmp', 'ico'];
 const TEXT_EXTENSIONS = [
   'txt', 'md', 'json', 'js', 'ts', 'html', 'htm', 'css', 'scss', 'xml', 'yml', 'yaml',
   'log', 'py', 'java', 'scala', 'kt', 'conf', 'ini', 'sh', 'bat', 'properties', 'csv',
@@ -82,7 +82,7 @@ export class EditPreviewDialogComponent {
 
   private resolveKind(): PreviewKind {
     const ext = extensionOf(this.data.entry.name);
-    if (IMAGE_EXTENSIONS.includes(ext)) {
+    if (isImageFile(this.data.entry.name)) {
       return 'image';
     }
     if (TEXT_EXTENSIONS.includes(ext)) {
