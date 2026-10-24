@@ -10,7 +10,28 @@ import {
 
 type TranslationDict = Record<string, string>;
 
+const APP_LOCALE_META_SELECTOR = 'meta[name="app-locale"]';
+
+/**
+ * Reads the Jakon admin user's configured locale from `<meta name="app-locale">`
+ * (rendered server-side by `fileManagerV2Frame.peb` via `{{ locale() }}`), so the
+ * app defaults to the same language as the rest of the Jakon admin UI instead of
+ * the browser's language or a stale `localStorage` value. Absent when the app is
+ * loaded outside of Jakon (e.g. the standalone dev server).
+ */
+function detectProfileLanguage(): SupportedLanguage | null {
+  const locale = document.querySelector(APP_LOCALE_META_SELECTOR)?.getAttribute('content');
+  if (locale && (SUPPORTED_LANGUAGES as readonly string[]).includes(locale)) {
+    return locale as SupportedLanguage;
+  }
+  return null;
+}
+
 function detectInitialLanguage(): SupportedLanguage {
+  const profileLang = detectProfileLanguage();
+  if (profileLang) {
+    return profileLang;
+  }
   const stored = localStorage.getItem(LANGUAGE_STORAGE_KEY);
   if (stored && (SUPPORTED_LANGUAGES as readonly string[]).includes(stored)) {
     return stored as SupportedLanguage;
@@ -24,8 +45,10 @@ function detectInitialLanguage(): SupportedLanguage {
 
 /**
  * Minimal signal-based translation service. Translations are plain JSON files
- * under `public/i18n/<lang>.json` (served at `/i18n/<lang>.json`), loaded on
- * demand when the language changes. Kept dependency-free on purpose.
+ * under `public/i18n/<lang>.json`, fetched with a base-href-relative URL
+ * (`i18n/<lang>.json`) so it resolves correctly both standalone (served at `/`)
+ * and embedded in Jakon (served under `/jakon/filemanager/`). Loaded on demand
+ * when the language changes. Kept dependency-free on purpose.
  */
 @Injectable({ providedIn: 'root' })
 export class I18nService {
@@ -63,7 +86,7 @@ export class I18nService {
 
   private async loadLanguage(lang: SupportedLanguage): Promise<void> {
     try {
-      const data = await firstValueFrom(this.http.get<TranslationDict>(`/i18n/${lang}.json`));
+      const data = await firstValueFrom(this.http.get<TranslationDict>(`i18n/${lang}.json`));
       this.dict.set(data);
     } catch {
       if (lang !== DEFAULT_LANGUAGE) {

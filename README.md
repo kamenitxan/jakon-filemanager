@@ -34,6 +34,7 @@ the folder is gitignored.)
 npm install
 npm start          # ng serve, proxied to the real backend (see below)
 npm run build       # production build -> dist/jakon-filemanager
+npm run build:jakon # stable file names for embedding in Jakon -> dist/jakon-filemanager-jakon (see below)
 npm test            # Vitest unit tests
 ```
 
@@ -53,6 +54,63 @@ Authentication relies entirely on the existing Jakon admin session cookie
 (`withCredentials: true` on every request via `credentialsInterceptor`) — log in to the
 Jakon admin UI in the same browser/profile first; there is no separate login flow here.
 
+### Embedding in Jakon
+
+Jakon serves this app as a second, "beta" file manager at `/admin/filemanager2`
+(`FileManagerV2Controller`), next to the original AngularJS one at `/admin/files`, so
+both can be used side by side while this rewrite is being tested. Only the hosting
+template differs — the JSON/upload/download API is still served, unchanged, by the
+original `FileManagerController` at `/admin/files/*`, since `FILE_MANAGER_API_BASE`
+(`/admin/files`) is hardcoded regardless of which page loaded the app.
+
+> **Why not `/admin/files2`?** The legacy `FileManagerController` registers a catch-all
+> route `@Get(path = "{method}")` under `/admin/files`, which Javalin resolves as "any
+> path segment starting with `files`, with the rest captured as `{method}`". That swallows
+> *any* path starting with `/admin/files`, including `/admin/files2` — so the page always
+> rendered the old file manager. The beta route must not start with the literal segment
+> `files`.
+
+Two things matter for that embedding:
+
+- **Stable file names.** `npm run build:jakon` uses a dedicated "jakon" Angular build
+  configuration (`outputHashing: "none"`, `baseHref: "/jakon/filemanager/"`) so the
+  Jakon Pebble template can hardcode `main.js`/`styles.css` paths instead of needing to
+  regenerate `index.html` on every build. Output goes to
+  `dist/jakon-filemanager-jakon/browser/`.
+- **CSRF header.** Jakon requires an `X-CSRF-Token` header (or `_csrf` form field) on
+  every non-GET `/admin/**` request outside of DEVEL mode, and its file manager
+  connector treats even `list` as a POST. The hosting template
+  (`fileManagerV2Frame.peb`) renders the session's token into
+  `<meta name="csrf-token" content="{{ csrfToken() }}">`, and `csrfInterceptor`
+  (`core/interceptors/csrf.interceptor.ts`) reads that tag and attaches it as
+  `X-CSRF-Token` on every outgoing request. When no such tag is present (e.g. the
+  standalone dev server), the interceptor is a no-op.
+- **Initial language.** The hosting template also renders the logged-in Jakon user's
+  configured locale into `<meta name="app-locale" content="{{ locale() }}">` (the
+  same `locale()`/`i18n()` Pebble functions the rest of the admin UI uses). The
+  `I18nService` (`core/services/i18n.service.ts`) reads that tag and uses it ahead of
+  any stored/browser-detected language, so the app opens in the same language as the
+  Jakon admin profile. Absent when loaded outside of Jakon, falling back to
+  `localStorage`/browser language as before.
+
+See the `update-jakon` skill (`.claude/skills/update-jakon/SKILL.md`) for the full
+build-and-copy procedure into the Jakon repository.
+
+The page is currently hosted in an `<iframe>` (`fileManagerV2.peb` embeds
+`fileManagerV2Frame.peb`), mirroring the legacy setup. This gives free document-level
+isolation between Jakon's own Bootstrap/jQuery admin theme and this app's Angular
+Material global styles (CSS custom properties, typography resets) and shell (toolbar +
+sidenav), which would otherwise bleed into each other if mounted into the same DOM.
+
+**Possible future alternative:** bootstrap the app as an [Angular
+Element](https://angular.dev/guide/elements) (custom element) with Shadow DOM instead of
+via `bootstrapApplication`. That would give the same style/script isolation without an
+iframe, so the app could be mounted directly into a Jakon admin page (no nested
+document, no double toolbar/menu chrome). Not done yet — it needs rethinking the
+bootstrap entry point, and checking that Angular Material's CDK overlays (dialogs,
+snackbar, autocomplete, which portal content outside the host element by default) still
+render correctly from inside a shadow root.
+
 ## Architecture
 
 ```
@@ -67,6 +125,7 @@ src/app/
       notification.service.ts        – MatSnackBar wrapper for success/error toasts
     interceptors/
       credentials.interceptor.ts     – forces withCredentials on every request
+      csrf.interceptor.ts            – attaches X-CSRF-Token from a <meta> tag (see Embedding in Jakon)
   features/file-manager/
     file-manager-actions.service.ts  – orchestrates dialogs + API calls + store refresh
     shell/           – responsive layout (sidenav + toolbar + list/grid)

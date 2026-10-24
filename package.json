@@ -5,8 +5,10 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "build:jakon": "ng build --configuration production,jakon",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "outdated": "npm outdated"
   },
   "private": true,
   "packageManager": "npm@11.19.1",
