@@ -96,6 +96,17 @@ Two things matter for that embedding:
 See the `update-jakon` skill (`.claude/skills/update-jakon/SKILL.md`) for the full
 build-and-copy procedure into the Jakon repository.
 
+> **This is a dumb setup.** The compiled output
+> (`modules/core/src/main/resources/static/jakon/filemanager/`) is gitignored in Jakon,
+> so it only exists on a machine after someone manually runs the `update-jakon` skill
+> there. A fresh checkout of Jakon built on another PC (or by CI) will have
+> `/admin/filemanager2` silently serving a 404/empty page for `main.js`/`styles.css`,
+> with no build error to point at the cause. There is currently no step in Jakon's own
+> build that pulls in or builds this frontend automatically. Until that's fixed (e.g. by
+> checking the built assets into Jakon after all, or wiring this project's build into
+> Jakon's build), remember to re-run `update-jakon` on every machine/environment that
+> needs a working beta file manager.
+
 The page is currently hosted in an `<iframe>` (`fileManagerV2.peb` embeds
 `fileManagerV2Frame.peb`), mirroring the legacy setup. This gives free document-level
 isolation between Jakon's own Bootstrap/jQuery admin theme and this app's Angular
